@@ -1,0 +1,14 @@
+Package: BEPoMAB
+Title: Base Épées à Poignée Métallique de l'Âge du Bronze
+Version: 0.0.0.9000
+Authors@R: 
+    person("Léonard", "Dumont", , "leonard.dumont@u-bourgogne.fr", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-2172-3350"))
+Description: Interactive exploration of the Bronze Age solid-hilted swords dataset through a table and a map.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Depends: 
+    R (>= 2.10)
+LazyData: true

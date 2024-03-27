@@ -1,0 +1,155 @@
+## Shiny Test App
+## Interface to Filemaker database or exported csv
+## User Interface (ui.R)
+
+library(shinytitle)
+
+ui <- fluidPage(
+  tags$head(
+    tags$style(HTML("
+                    #swordmap {height: calc(100vh - 300px) !important;}
+                    .nav-tabs>li>a {color: #29804e;}
+                   ")
+      ),
+    tags$script(
+      HTML(
+        "
+        Shiny.addCustomMessageHandler(
+         'removeleaflet',
+          function(x){
+            console.log('deleting',x)
+            // get leaflet map
+            var map = HTMLWidgets.find('#' + x.elid).getMap();
+            // remove
+            map.removeLayer(map._layers[x.layerid])
+          }
+        )
+        "
+      )
+    )
+  ),
+  
+  # Page title in the browser
+  title = "Base EPoMAB",
+  use_shiny_title(),
+  
+  ## Title row
+  titlePanel(div(span("Base", style = "color:#29804e; font-weight: normal"),
+                 span("Épées à poignée métallique de l'âge du Bronze", style = "color:#29804e; font-style: italic"),
+                 span("(EPoMAB)", style = "color:#29804e; font-weight: normal")
+                 )
+             ),
+
+    tabsetPanel(id = "mainpanel",
+      tabPanel(title = "Présentation", value = "tabpres",
+               fluidRow(
+                 br(),
+                 column(1,
+                        span()
+                 ), # end spacing column
+                 column(3, align = "center",
+                        img(src='Buggenum_poignee_web.png', 
+                            width = "75%", height = "75%"),
+                        p("Épée de Buggenum (Pays-Bas). © L. Dumont.")
+                       ), # end column picture
+                 column(1,
+                        span()
+                       ), # end spacing column
+                 column(4,
+                       includeMarkdown("www/intro.md"),
+                       p(),
+                       img(src='Tournus_Farges_motif_lame.png', 
+                           width = "75%", height = "75%"),
+                       ), # end text column
+                 column(1,
+                        span()
+                 ), # end spacing column
+               ) # end fluidRow
+              ), # end tabPanel Présentation
+      tabPanel(title = "Données", value = "tabletab",
+          sidebarLayout(
+            sidebarPanel(width=2,
+              
+              # Typologie
+              p(span("Typologie", style = "font-weight: bold; font-size:16px;")),
+              div(selectInput("swordGrp", label=span("Groupe :", style = "font-weight: normal"), 
+                              choices = NULL, selected = NULL, multiple = TRUE)),
+              div(selectInput("swordType", label=span("Type :", style = "font-weight: normal"),
+                              choices = NULL, selected = NULL, multiple = TRUE)),
+              div(selectInput("swordVar", label=span("Variante :", style = "font-weight: normal"),
+                              choices = NULL, selected = NULL, multiple = TRUE)),
+          
+              # Contexte
+              div(selectInput("swordCont", label=span("Contexte", style = "font-size: 16px;"),
+                              choices = NULL, selected = NULL, multiple = TRUE)),
+              
+              # Chronologie
+              p(span("Chronologie", style = "font-weight: bold; font-size:16px;")),
+              div(selectInput("swordPer", label=span("Période :", style = "font-weight: normal"), 
+                              choices = NULL, selected = NULL, multiple = TRUE)),
+              div(selectInput("swordPha", label=span("Phase :", style = "font-weight: normal"),
+                              choices = NULL, selected = NULL, multiple = TRUE)),
+              div(selectInput("swordStep", label=span("Étape :", style = "font-weight: normal"),
+                              choices = NULL, selected = NULL, multiple = TRUE)),
+              
+              # Géographie
+              p(span("Géographie", style = "font-weight: bold; font-size:16px;")),
+              div(selectInput("swordCountry", label=span("Pays :", style = "font-weight: normal"), 
+                              choices = NULL, selected = NULL, multiple = TRUE)),
+              div(selectInput("swordReg", label=span("Région :", style = "font-weight: normal"),
+                              choices = NULL, selected = NULL, multiple = TRUE))
+              
+            ), # end sidebarPanel
+            mainPanel(width=8,
+              div(style="display:inline-block",
+                  radioButtons("search_typo","Mode de recherche :", 
+                               choices = c("ET","OU"), selected = "ET", inline = T)),
+              div(style="display:inline-block", actionButton("reset", "Reset")),
+              #div(style="display:inline-block", actionButton("tomap","Aller à la carte")),
+              div(style="display:inline-block", downloadButton("download.table","Télécharger")),
+              p(),
+              fluidRow(DT::dataTableOutput("table"))
+            ) # end mainPanel
+          ) # end sidebarLayout
+      ), #end tabPanel Données
+    tabPanel(title = "Carte", value = "maptab",
+             fluidRow(
+               column(4,
+                 align = "left",
+                 HTML("<h4>Cliquez sur un point pour visualiser les informations</h4>")
+               ),
+               # column(2,
+               #        radioButtons("map_mode","Mode choisi", choices = c("Sélection","Export"), selected = "Sélection", inline = T)
+               # ),
+               column(2,
+                      actionButton("map.select.all","Tout sélectionner")
+               ),
+               column(1,
+                      actionButton("reset.map.selection", "Reset")
+               ),
+               column(2,
+                 uiOutput("button.table.map")
+               )
+             ),
+             leafletOutput("swordmap"),
+             fluidRow(column(12,uiOutput("riverbuffer"))),
+             fluidRow(uiOutput("clickedpoint"))
+      ),
+    tabPanel("Bibliographie", value = "tabbib",
+            p(),
+            p("Les données présentes dans cette base sont issues du dépouillement des références ci-dessous."),
+            p("La liste des références utilisées est également disponible au format bibtex : ",
+              a(href="BEPoMAB.bib", "Télécharger la bibliographie", download=NA, target="_blank")),
+            p(),
+            tags$iframe(src="Dumont_biblio_dataubfc.html", width = 800, height = 700)
+            # includeHTML("www/Dumont_biblio_dataubfc.html")
+            ),
+    tabPanel("Documentation", value = "tabdoc",
+             includeMarkdown("README.md")
+             ),
+    tabPanel("Contact", value = "tabcontact",
+             includeMarkdown("www/contact.md"),
+             img(src="Huma-Num.png", width = "30%", height = "30%")
+            )
+  ) # end TabsetPanel
+)
