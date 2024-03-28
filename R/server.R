@@ -15,6 +15,7 @@ library(dplyr)
 library(data.table)
 library(leaflet)
 library(leaflet.extras)
+library(leafgl)
 library(sf)
 
 server <- function(input, output, session) {
@@ -316,6 +317,8 @@ server <- function(input, output, session) {
   
   ## Importing river layer
   rivers10 <- st_read("www/rivers_simplified.shp", quiet = TRUE)
+  #rivers10 <- st_cast(rivers10, "LINESTRING")
+  #rivers10 <- st_read("www/rivers.fgb", quiet = TRUE)
   # donau <- st_union(rivers10[which(rivers10$name_fr == "Danube"),])
   # rivers10 <- rivers10[-which(rivers10$rivernum == 38),]
   # rivers10$geometry[which(rivers10$rivernum == 25)] <- donau
@@ -343,7 +346,7 @@ server <- function(input, output, session) {
                    weight = 2,
                    layerId = ~ne_id,
                    label = ~name_fr,
-                   group = "rivers") %>% 
+                   group = "rivers") %>%
       addPolylines(data = rivers10, ## hidden rivers layer
                    color = "red",
                    opacity = 0.5,
@@ -351,7 +354,7 @@ server <- function(input, output, session) {
                    weight = 3,
                    layerId = ~dissolve,
                    label = ~name_fr,
-                   group = ~dissolve) %>% 
+                   group = ~dissolve) %>%
       addCircles(data = datasetmap(),
                  lng = ~X, lat = ~Y, ## default visible layer
                  fillColor = "blue",

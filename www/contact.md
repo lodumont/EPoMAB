@@ -2,7 +2,7 @@
 
 En cas de questions à propos de la base, vous pouvez contacter [Léonard Dumont](mailto:leonard.dumont@u-bourgogne.fr).
 
-Le code source de l'application est disponible sur Github.
+Le code source de l'application est disponible sur [Github](https://github.com/lodumont/EPoMAB).
 
 ## Crédits
 

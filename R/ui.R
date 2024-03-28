@@ -139,9 +139,9 @@ ui <- fluidPage(
             p(),
             p("Les données présentes dans cette base sont issues du dépouillement des références ci-dessous."),
             p("La liste des références utilisées est également disponible au format bibtex : ",
-              a(href="BEPoMAB.bib", "Télécharger la bibliographie", download=NA, target="_blank")),
+              a(href="EPoMAB.bib", "Télécharger la bibliographie", download=NA, target="_blank")),
             p(),
-            tags$iframe(src="Dumont_biblio_dataubfc.html", width = 800, height = 700)
+            tags$iframe(src="EPoMAB_biblio.html", width = 800, height = 700)
             # includeHTML("www/Dumont_biblio_dataubfc.html")
             ),
     tabPanel("Documentation", value = "tabdoc",
