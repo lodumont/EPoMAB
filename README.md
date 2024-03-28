@@ -34,7 +34,7 @@ Le jeu de données compte à l'heure actuelle 2780 enregistrements décrits à l
     - "Inconnu" : contexte indéterminé.
   - **Periode** : période chronologique (par exemple : Bronze final).
   - **Phase** : phase chronologique (par exemple : Bronze final 3).
-  - **Etape** : étape chronologique (par exemple: Bronze finak 3b).
+  - **Etape** : étape chronologique (par exemple: Bronze final 3b).
   - **Indice_confiance** : indice de confiance permettant de juger de la qualité des informations technologiques disponibles sur l'épée :
     - 1 : épée connue uniquement par l'intermédiaire de descriptions textuelles.
     - 2 : épée étudiée par l'intermédiaire d'une documentation graphique (photographies, dessins…).
