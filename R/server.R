@@ -316,7 +316,7 @@ server <- function(input, output, session) {
   }, ignoreNULL = FALSE)
   
   ## Importing river layer
-  rivers10 <- st_read("www/rivers_simplified.shp", quiet = TRUE)
+  #rivers <- st_read("www/rivers_simplified.shp", quiet = TRUE)
   #rivers10 <- st_cast(rivers10, "LINESTRING")
   #rivers10 <- st_read("www/rivers.fgb", quiet = TRUE)
   # donau <- st_union(rivers10[which(rivers10$name_fr == "Danube"),])
@@ -339,7 +339,7 @@ server <- function(input, output, session) {
                      circleOptions = FALSE,
                      markerOptions = FALSE,
                      circleMarkerOptions = FALSE) %>% 
-      addPolylines(data = rivers10, ## rivers layer
+      addPolylines(data = rivers, ## rivers layer
                    color = "darkgrey",
                    opacity = 0.5,
                    stroke = TRUE,
@@ -347,7 +347,7 @@ server <- function(input, output, session) {
                    layerId = ~ne_id,
                    label = ~name_fr,
                    group = "rivers") %>%
-      addPolylines(data = rivers10, ## hidden rivers layer
+      addPolylines(data = rivers, ## hidden rivers layer
                    color = "red",
                    opacity = 0.5,
                    stroke = TRUE,
@@ -375,7 +375,7 @@ server <- function(input, output, session) {
                  layerId = ~ID,
                  group = paste0(datasetmap()$Commune,datasetmap()$ID)) %>% 
       hideGroup(group = paste0(datasetmap()$Commune,datasetmap()$ID)) %>% 
-      hideGroup(group = rivers10$dissolve)
+      hideGroup(group = rivers$dissolve)
   })
   
   proxy <- leafletProxy("swordmap", session)
@@ -403,13 +403,13 @@ server <- function(input, output, session) {
     
     if(input$swordmap_shape_click$group == "rivers") {
       if(!is.null(selected$riverid)) {
-        proxy %>% hideGroup(group = rivers10$dissolve[which(rivers10$ne_id == selected$riverid)])
+        proxy %>% hideGroup(group = rivers$dissolve[which(rivers$ne_id == selected$riverid)])
       }
       selected$riverid <- input$swordmap_shape_click$id
-      selected$rivername <- rivers10$name_fr[which(rivers10$ne_id == selected$riverid)]
-      proxy %>% showGroup(group = rivers10$dissolve[which(rivers10$ne_id == selected$riverid)])
+      selected$rivername <- rivers$name_fr[which(rivers$ne_id == selected$riverid)]
+      proxy %>% showGroup(group = rivers$dissolve[which(rivers$ne_id == selected$riverid)])
       show.map.riverbuffer(1)
-    } else if(input$swordmap_shape_click$group %in% rivers10$dissolve) {
+    } else if(input$swordmap_shape_click$group %in% rivers$dissolve) {
       proxy %>% hideGroup(group = input$swordmap_shape_click$group)
       show.map.riverbuffer(0)
     }
@@ -431,7 +431,7 @@ server <- function(input, output, session) {
   
   # River buffer button
   observeEvent(input$submit.river.buffer, {
-    river <- rivers10[which(rivers10$ne_id == selected$riverid),]
+    river <- rivers[which(rivers$ne_id == selected$riverid),]
     riverbuffer <- st_buffer(river, input$riverbuffer)
     proxy %>% addPolygons(data = riverbuffer,
                           weight = 1,
@@ -531,7 +531,7 @@ server <- function(input, output, session) {
   observeEvent(input$reset.map.selection, {
     #selected$ids <- c()
     proxy %>% hideGroup(group = c(paste0(datasetmap()$Commune,datasetmap()$ID),
-                                  rivers10$dissolve[which(rivers10$ne_id == selected$riverid)])
+                                  rivers$dissolve[which(rivers$ne_id == selected$riverid)])
                         ) %>% 
               clearGroup(group = "buffer")
     lapply(X = names(selected),
