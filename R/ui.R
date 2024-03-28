@@ -141,8 +141,9 @@ ui <- fluidPage(
             p("La liste des références utilisées est également disponible au format bibtex : ",
               a(href="EPoMAB.bib", "Télécharger la bibliographie", download=NA, target="_blank")),
             p(),
-            tags$iframe(src="EPoMAB_biblio.html", width = 800, height = 700)
-            # includeHTML("www/Dumont_biblio_dataubfc.html")
+            #tags$iframe(src="EPoMAB_biblio.html", width = 800, height = 700)
+            includeHTML("www/EPoMAB.css"),
+            includeHTML("www/EPoMAB_biblio.html")
             ),
     tabPanel("Documentation", value = "tabdoc",
              includeMarkdown("README.md")

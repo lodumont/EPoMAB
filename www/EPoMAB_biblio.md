@@ -1,7 +1,6 @@
 ---
 output: 
-  html_document:
-    mathjax: null
+  html_fragment:
     css: BEPoMAB.css
 bibliography: EPoMAB.bib
 csl: bspf.csl
