@@ -164,7 +164,7 @@
   <bibliography et-al-min="4" et-al-use-first="1">
     <sort>
       <key macro="author"/>
-      <key variable="title"/>
+      <key macro="year-date"/>
     </sort>
     <layout suffix=" ">
       <group delimiter=" ">
