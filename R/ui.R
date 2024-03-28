@@ -4,6 +4,11 @@
 
 library(shinytitle)
 
+selectInputS <- function(id, mylabel) {
+  div(selectInput(id, label=span(mylabel, style = "font-weight: normal"), 
+              choices = NULL, selected = NULL, multiple = TRUE))
+}
+
 ui <- fluidPage(
   tags$head(
     tags$style(HTML("
@@ -72,12 +77,9 @@ ui <- fluidPage(
               
               # Typologie
               p(span("Typologie", style = "font-weight: bold; font-size:16px;")),
-              div(selectInput("swordGrp", label=span("Groupe :", style = "font-weight: normal"), 
-                              choices = NULL, selected = NULL, multiple = TRUE)),
-              div(selectInput("swordType", label=span("Type :", style = "font-weight: normal"),
-                              choices = NULL, selected = NULL, multiple = TRUE)),
-              div(selectInput("swordVar", label=span("Variante :", style = "font-weight: normal"),
-                              choices = NULL, selected = NULL, multiple = TRUE)),
+              selectInputS("swordGrp", "Groupe :"),
+              selectInputS("swordType", "Type :"),
+              selectInputS("swordVar", "Variante :"),
           
               # Contexte
               div(selectInput("swordCont", label=span("Contexte", style = "font-size: 16px;"),
@@ -85,19 +87,14 @@ ui <- fluidPage(
               
               # Chronologie
               p(span("Chronologie", style = "font-weight: bold; font-size:16px;")),
-              div(selectInput("swordPer", label=span("Période :", style = "font-weight: normal"), 
-                              choices = NULL, selected = NULL, multiple = TRUE)),
-              div(selectInput("swordPha", label=span("Phase :", style = "font-weight: normal"),
-                              choices = NULL, selected = NULL, multiple = TRUE)),
-              div(selectInput("swordStep", label=span("Étape :", style = "font-weight: normal"),
-                              choices = NULL, selected = NULL, multiple = TRUE)),
+              selectInputS("swordPer", "Période :"),
+              selectInputS("swordPha", "Phase :"),
+              selectInputS("swordStep", "Étape :"),
               
               # Géographie
               p(span("Géographie", style = "font-weight: bold; font-size:16px;")),
-              div(selectInput("swordCountry", label=span("Pays :", style = "font-weight: normal"), 
-                              choices = NULL, selected = NULL, multiple = TRUE)),
-              div(selectInput("swordReg", label=span("Région :", style = "font-weight: normal"),
-                              choices = NULL, selected = NULL, multiple = TRUE))
+              selectInputS("swordCountry", "Pays :"),
+              selectInputS("swordReg", "Région :")
               
             ), # end sidebarPanel
             mainPanel(width=8,
