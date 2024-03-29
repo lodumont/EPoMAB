@@ -68,7 +68,8 @@ ui <- fluidPage(
                         span()
                        ), # end spacing column
                  column(4,
-                       includeMarkdown("www/intro.md"),
+                       #includeMarkdown("www/intro.md"),
+                       uiOutput("welcome"),
                        p(),
                        img(src='Tournus_Farges_motif_lame.png', 
                            width = "75%", height = "75%"),

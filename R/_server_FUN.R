@@ -27,3 +27,14 @@ updateSelectInput_smode_ET <- function(id, col, col2) {
 updateSelectInput_reset <- function(id, col) {
   updateSelectInput(session, id, choices = sort(unique(EPoMAB[,col])), selected = character(0))
 }
+
+includeLangMarkdown <- function(file.fr, file.en) {
+  renderUI({
+    file <- switch(input$lang,
+                   "Fr" = paste0("www/",file.fr),
+                   "En" = paste0("www/",file.en),
+                   stop("Option inconnue")
+    )
+    includeMarkdown(file)
+  })
+}

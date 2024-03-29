@@ -635,4 +635,8 @@ server <- function(input, output, session) {
       write.csv(maptable(), fname, row.names = FALSE)
     }
   )
+  
+  ## Welcome text rendering according to chosen language (French (default) or English)
+  output$welcome <- includeLangMarkdown("intro_fr.md",
+                                        "intro_en.md")
 }
