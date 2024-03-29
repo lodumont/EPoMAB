@@ -346,7 +346,7 @@ server <- function(input, output, session) {
                                                      minZoom = 3, maxZoom = 9)
                        ) %>% 
       setView(lng = 4, lat = 50, zoom = 5) %>% ## Default view
-      setMaxBounds(lng1 = -7.25, lat1 = 35, ## Maximum user view
+      setMaxBounds(lng1 = -10, lat1 = 35, ## Maximum user view
                 lng2 = 29, lat2 = 65) %>% 
       addDrawToolbar(targetGroup = "draw", position = "topleft",
                      polylineOptions = FALSE,
@@ -592,26 +592,22 @@ server <- function(input, output, session) {
   output$riverbuffer <- renderUI(
     expr= if(show.map.riverbuffer()) {
       fluidRow(
-        column(2,
-               br(),
                paste0("Rivière sélectionnée : ",
-                      selected$rivername)
-        ),
-        column(4,
+                      selected$rivername),
+               br(),
                numericInput("riverbuffer",
                             "Sélection dans un rayon de (en m) :",
                             5000,
                             min = 0,
                             max = 100000,
                             step = 1000),
-               br(),
-               actionButton("submit.river.buffer", "Sélection")
+                   br(),
+                   actionButton("submit.river.buffer", "Sélection")
         )#,
         # column(1,
         #        br(),
         #        actionButton("submit.river.buffer", "Sélection")
         # )
-      )
     }
   )
 

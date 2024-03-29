@@ -10,26 +10,25 @@ source("R/_utils.R", local = TRUE)
 ui <- fluidPage(
   tags$head(
     tags$style(HTML("
-                    #swordmap {height: calc(100vh - 300px) !important;}
                     .nav-tabs>li>a {color: #29804e;}
                    ")
-      ),
-    tags$script(
-      HTML(
-        "
-        Shiny.addCustomMessageHandler(
-         'removeleaflet',
-          function(x){
-            console.log('deleting',x)
-            // get leaflet map
-            var map = HTMLWidgets.find('#' + x.elid).getMap();
-            // remove
-            map.removeLayer(map._layers[x.layerid])
-          }
-        )
-        "
-      )
-    )
+      )#,
+    # tags$script(
+    #   HTML(
+    #     "
+    #     Shiny.addCustomMessageHandler(
+    #      'removeleaflet',
+    #       function(x){
+    #         console.log('deleting',x)
+    #         // get leaflet map
+    #         var map = HTMLWidgets.find('#' + x.elid).getMap();
+    #         // remove
+    #         map.removeLayer(map._layers[x.layerid])
+    #       }
+    #     )
+    #     "
+    #   )
+    # )
   ),
   
   # Page title in the browser
@@ -136,8 +135,14 @@ ui <- fluidPage(
                  uiOutput("button.table.map")
                )
              ),
-             leafletOutput("swordmap"),
-             fluidRow(column(12,uiOutput("riverbuffer"))),
+             fluidRow(
+              column(9,
+                     leafletOutput("swordmap", height = "600px")
+                     ),
+              column(3,
+                     uiOutput("riverbuffer")
+                     )
+             ),
              fluidRow(uiOutput("clickedpoint"))
       ),
     tabPanel("Bibliographie", value = "tabbib",
