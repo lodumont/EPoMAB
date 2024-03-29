@@ -137,7 +137,7 @@ ui <- fluidPage(
              ),
              fluidRow(
               column(9,
-                     leafletOutput("swordmap", height = "600px")
+                     leafletOutput("swordmap", height = "590px")
                      ),
               column(3,
                      uiOutput("riverbuffer")
