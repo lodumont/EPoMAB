@@ -12,23 +12,23 @@ ui <- fluidPage(
     tags$style(HTML("
                     .nav-tabs>li>a {color: #29804e;}
                    ")
-      )#,
-    # tags$script(
-    #   HTML(
-    #     "
-    #     Shiny.addCustomMessageHandler(
-    #      'removeleaflet',
-    #       function(x){
-    #         console.log('deleting',x)
-    #         // get leaflet map
-    #         var map = HTMLWidgets.find('#' + x.elid).getMap();
-    #         // remove
-    #         map.removeLayer(map._layers[x.layerid])
-    #       }
-    #     )
-    #     "
-    #   )
-    # )
+      ),
+    tags$script( # Deleting drawn polygons on map when hitting reset button
+      HTML(
+        "
+        Shiny.addCustomMessageHandler(
+         'removeleaflet',
+          function(x){
+            console.log('deleting',x)
+            // get leaflet map
+            var map = HTMLWidgets.find('#' + x.elid).getMap();
+            // remove
+            map.removeLayer(map._layers[x.layerid])
+          }
+        )
+        "
+      )
+    )
   ),
   
   # Page title in the browser

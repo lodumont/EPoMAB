@@ -561,6 +561,7 @@ server <- function(input, output, session) {
              drawnid[[x]] <- NULL
            })
     #print(drawnid$polygons)
+    # remove drawn polygos with script in app_ui.R
     lapply(lid,
            function(todelete) {
              session$sendCustomMessage(
