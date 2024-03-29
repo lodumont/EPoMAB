@@ -7,18 +7,18 @@
 ## - Export map with north arrow + scale
 ## - Need two modes for map : selection and export, the latter with legends, north arrow and scale
 
-library(shiny)
-library(usethis)
 library(DT)
 #library(ggplot2)
 library(dplyr)
 library(data.table)
 library(leaflet)
 library(leaflet.extras)
-library(leafgl)
+#library(leafgl)
 library(sf)
+library(purrr)
 
 server <- function(input, output, session) {
+  source("R/_server_FUN.R", local = TRUE)
   # Data
   #mob <- read.csv("./data/mobilier.csv")
   #smob <- EPoMAB
@@ -39,22 +39,25 @@ server <- function(input, output, session) {
   #                    X = mob$X,
   #                    Y = mob$Y)
   
-  ## Selecting typology
-  updateSelectInput(session, "swordGrp", choices = sort(unique(EPoMAB$Groupe)))
-  updateSelectInput(session, "swordType", choices = sort(unique(EPoMAB$Type)))
-  updateSelectInput(session, "swordVar", choices = sort(unique(EPoMAB$Variante)))
-  
-  ## Selecting context
-  updateSelectInput(session, "swordCont", choices = sort(unique(EPoMAB$Contexte)))
-  
-  ## Selecting chronology
-  updateSelectInput(session, "swordPer", choices = sort(unique(EPoMAB$Periode)))
-  updateSelectInput(session, "swordPha", choices = sort(unique(EPoMAB$Phase)))
-  updateSelectInput(session, "swordStep", choices = sort(unique(EPoMAB$Etape)))
-  
-  ## Selecting geograpy
-  updateSelectInput(session, "swordCountry", choices = sort(unique(EPoMAB$Pays)))
-  updateSelectInput(session, "swordReg", choices = sort(unique(EPoMAB$Region)))
+  ## Table query parameters
+  # Run customized function updateSelectInput_col through table_eq values
+  usi_query <- purrr::pmap(table_eq, updateSelectInput_col)
+  #updateSelectInput(session, "swordGrp", choices = sort(unique(EPoMAB$Groupe)))
+  # updateSelectInput_col("swordGrp", "Groupe")
+  # updateSelectInput(session, "swordType", choices = sort(unique(EPoMAB$Type)))
+  # updateSelectInput(session, "swordVar", choices = sort(unique(EPoMAB$Variante)))
+  # 
+  # ## Selecting context
+  # updateSelectInput(session, "swordCont", choices = sort(unique(EPoMAB$Contexte)))
+  # 
+  # ## Selecting chronology
+  # updateSelectInput(session, "swordPer", choices = sort(unique(EPoMAB$Periode)))
+  # updateSelectInput(session, "swordPha", choices = sort(unique(EPoMAB$Phase)))
+  # updateSelectInput(session, "swordStep", choices = sort(unique(EPoMAB$Etape)))
+  # 
+  # ## Selecting geograpy
+  # updateSelectInput(session, "swordCountry", choices = sort(unique(EPoMAB$Pays)))
+  # updateSelectInput(session, "swordReg", choices = sort(unique(EPoMAB$Region)))
   
   ##Search mode
   smode <- reactive(input$search_typo)
@@ -63,77 +66,88 @@ server <- function(input, output, session) {
   observeEvent(input$swordGrp, {
     if(!is.null(input$swordGrp)) {
       if(smode() == "ET"){
-        updateSelectInput(session, 
-                          "swordType", 
-                          choices = sort(unique(EPoMAB$Type[which(EPoMAB$Groupe %in% input$swordGrp)])))
-        updateSelectInput(session, 
-                          "swordVar", 
-                          choices = sort(unique(EPoMAB$Variante[which(EPoMAB$Groupe %in% input$swordGrp)])))
-        updateSelectInput(session, 
-                          "swordCont", 
-                          choices = sort(unique(EPoMAB$Contexte[which(EPoMAB$Groupe %in% input$swordGrp)])))
-        updateSelectInput(session, 
-                          "swordPer", 
-                          choices = sort(unique(EPoMAB$Periode[which(EPoMAB$Groupe %in% input$swordGrp)])))
-        updateSelectInput(session, 
-                          "swordPha", 
-                          choices = sort(unique(EPoMAB$Phase[which(EPoMAB$Groupe %in% input$swordGrp)])))
-        updateSelectInput(session, 
-                          "swordStep", 
-                          choices = sort(unique(EPoMAB$Etape[which(EPoMAB$Groupe %in% input$swordGrp)])))
+        # Updating choices according to what Groupe is selected
+        usi_smode_ET_Groupe <- purrr::pmap(table_eq[2:7,], ~updateSelectInput_smode_ET(id = ..1,
+                                                                                 col = ..2,
+                                                                                 col2 = "Groupe"))
+        #updateSelectInput_smode_ET("swordType", "Type", "Groupe")
+        # updateSelectInput(session, 
+        #                   "swordType", 
+        #                   choices = sort(unique(EPoMAB$Type[which(EPoMAB$Groupe %in% input$swordGrp)])))
+        # updateSelectInput(session, 
+        #                   "swordVar", 
+        #                   choices = sort(unique(EPoMAB$Variante[which(EPoMAB$Groupe %in% input$swordGrp)])))
+        # updateSelectInput(session, 
+        #                   "swordCont", 
+        #                   choices = sort(unique(EPoMAB$Contexte[which(EPoMAB$Groupe %in% input$swordGrp)])))
+        # updateSelectInput(session, 
+        #                   "swordPer", 
+        #                   choices = sort(unique(EPoMAB$Periode[which(EPoMAB$Groupe %in% input$swordGrp)])))
+        # updateSelectInput(session, 
+        #                   "swordPha", 
+        #                   choices = sort(unique(EPoMAB$Phase[which(EPoMAB$Groupe %in% input$swordGrp)])))
+        # updateSelectInput(session, 
+        #                   "swordStep", 
+        #                   choices = sort(unique(EPoMAB$Etape[which(EPoMAB$Groupe %in% input$swordGrp)])))
       }
     } else {
-      updateSelectInput(session, 
-                        "swordType", 
-                        choices = sort(unique(EPoMAB$Type)))
-      updateSelectInput(session, "swordVar", choices = sort(unique(EPoMAB$Variante)))
-      updateSelectInput(session, "swordCont", choices = sort(unique(EPoMAB$Contexte)))
-      updateSelectInput(session, "swordPer", choices = sort(unique(EPoMAB$Periode)))
-      updateSelectInput(session, "swordPha", choices = sort(unique(EPoMAB$Phase)))
-      updateSelectInput(session, "swordStep", choices = sort(unique(EPoMAB$Etape)))
+      usi_smode_ET_no_Groupe <- purrr::pmap(table_eq[2:7,], updateSelectInput_col)
+      # updateSelectInput(session, 
+      #                   "swordType", 
+      #                   choices = sort(unique(EPoMAB$Type)))
+      # updateSelectInput(session, "swordVar", choices = sort(unique(EPoMAB$Variante)))
+      # updateSelectInput(session, "swordCont", choices = sort(unique(EPoMAB$Contexte)))
+      # updateSelectInput(session, "swordPer", choices = sort(unique(EPoMAB$Periode)))
+      # updateSelectInput(session, "swordPha", choices = sort(unique(EPoMAB$Phase)))
+      # updateSelectInput(session, "swordStep", choices = sort(unique(EPoMAB$Etape)))
     }
   }, ignoreNULL = FALSE)
   
   observeEvent(input$swordType, {
     if(!is.null(input$swordType)) {
       if(smode() == "ET"){
-        updateSelectInput(session, 
-                          "swordVar", 
-                          choices = sort(unique(EPoMAB$Variante[which(EPoMAB$Type %in% input$swordType)])))
-        updateSelectInput(session, 
-                          "swordCont", 
-                          choices = sort(unique(EPoMAB$Contexte[which(EPoMAB$Type %in% input$swordType)])))
-        updateSelectInput(session, 
-                          "swordPer", 
-                          choices = sort(unique(EPoMAB$Periode[which(EPoMAB$Type %in% input$swordType)])))
-        updateSelectInput(session, 
-                          "swordPha", 
-                          choices = sort(unique(EPoMAB$Phase[which(EPoMAB$Type %in% input$swordType)])))
-        updateSelectInput(session, 
-                          "swordStep", 
-                          choices = sort(unique(EPoMAB$Etape[which(EPoMAB$Type %in% input$swordType)])))
+        usi_smode_ET_Type <- purrr::pmap(table_eq[3:7,], ~updateSelectInput_smode_ET(id = ..1,
+                                                                                     col = ..2,
+                                                                                     col2 = "Type"))
+        # updateSelectInput(session, 
+        #                   "swordVar", 
+        #                   choices = sort(unique(EPoMAB$Variante[which(EPoMAB$Type %in% input$swordType)])))
+        # updateSelectInput(session, 
+        #                   "swordCont", 
+        #                   choices = sort(unique(EPoMAB$Contexte[which(EPoMAB$Type %in% input$swordType)])))
+        # updateSelectInput(session, 
+        #                   "swordPer", 
+        #                   choices = sort(unique(EPoMAB$Periode[which(EPoMAB$Type %in% input$swordType)])))
+        # updateSelectInput(session, 
+        #                   "swordPha", 
+        #                   choices = sort(unique(EPoMAB$Phase[which(EPoMAB$Type %in% input$swordType)])))
+        # updateSelectInput(session, 
+        #                   "swordStep", 
+        #                   choices = sort(unique(EPoMAB$Etape[which(EPoMAB$Type %in% input$swordType)])))
       }
     } else {
-      updateSelectInput(session, "swordVar", choices = sort(unique(EPoMAB$Variante)))
-      updateSelectInput(session, "swordCont", choices = sort(unique(EPoMAB$Contexte)))
-      updateSelectInput(session, "swordPer", choices = sort(unique(EPoMAB$Periode)))
-      updateSelectInput(session, "swordPha", choices = sort(unique(EPoMAB$Phase)))
-      updateSelectInput(session, "swordStep", choices = sort(unique(EPoMAB$Etape)))
+      usi_smode_ET_no_Type <- purrr::pmap(table_eq[3:7,], updateSelectInput_col)
+      # updateSelectInput(session, "swordVar", choices = sort(unique(EPoMAB$Variante)))
+      # updateSelectInput(session, "swordCont", choices = sort(unique(EPoMAB$Contexte)))
+      # updateSelectInput(session, "swordPer", choices = sort(unique(EPoMAB$Periode)))
+      # updateSelectInput(session, "swordPha", choices = sort(unique(EPoMAB$Phase)))
+      # updateSelectInput(session, "swordStep", choices = sort(unique(EPoMAB$Etape)))
     }
   }, ignoreNULL = FALSE)
 
   
   ## Reset button
   observeEvent(input$reset, {
-    updateSelectInput(session, "swordGrp", choices = sort(unique(EPoMAB$Groupe)), selected = character(0))
-    updateSelectInput(session, "swordType", choices = sort(unique(EPoMAB$Type)), selected = character(0))
-    updateSelectInput(session, "swordVar", choices = sort(unique(EPoMAB$Variante)), selected = character(0))
-    updateSelectInput(session, "swordCont", choices = sort(unique(EPoMAB$Contexte)), selected = character(0))
-    updateSelectInput(session, "swordPer", choices = sort(unique(EPoMAB$Periode)), selected = character(0))
-    updateSelectInput(session, "swordPha", choices = sort(unique(EPoMAB$Phase)), selected = character(0))
-    updateSelectInput(session, "swordStep", choices = sort(unique(EPoMAB$Etape)), selected = character(0))
-    updateSelectInput(session, "swordCountry", choices = sort(unique(EPoMAB$Pays)), selected = character(0))
-    updateSelectInput(session, "swordReg", choices = sort(unique(EPoMAB$Region)), selected = character(0))
+    usi_reset <- purrr::pmap(table_eq, updateSelectInput_reset)
+    # updateSelectInput(session, "swordGrp", choices = sort(unique(EPoMAB$Groupe)), selected = character(0))
+    # updateSelectInput(session, "swordType", choices = sort(unique(EPoMAB$Type)), selected = character(0))
+    # updateSelectInput(session, "swordVar", choices = sort(unique(EPoMAB$Variante)), selected = character(0))
+    # updateSelectInput(session, "swordCont", choices = sort(unique(EPoMAB$Contexte)), selected = character(0))
+    # updateSelectInput(session, "swordPer", choices = sort(unique(EPoMAB$Periode)), selected = character(0))
+    # updateSelectInput(session, "swordPha", choices = sort(unique(EPoMAB$Phase)), selected = character(0))
+    # updateSelectInput(session, "swordStep", choices = sort(unique(EPoMAB$Etape)), selected = character(0))
+    # updateSelectInput(session, "swordCountry", choices = sort(unique(EPoMAB$Pays)), selected = character(0))
+    # updateSelectInput(session, "swordReg", choices = sort(unique(EPoMAB$Region)), selected = character(0))
   })
   
   ## Download table button

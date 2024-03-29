@@ -8,7 +8,7 @@ library(shiny)
 # source("ui.R")
 # source("server.R")
 
-devtools::load_all()
+pkgload::load_all(export_all = FALSE)
 
 shinyApp(ui = ui, server = server)
 

@@ -5,6 +5,8 @@
 library(shinytitle)
 library(shinyWidgets)
 
+source("R/_utils.R", local = TRUE)
+
 ui <- fluidPage(
   tags$head(
     tags$style(HTML("
