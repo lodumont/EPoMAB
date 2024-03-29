@@ -3,11 +3,7 @@
 ## User Interface (ui.R)
 
 library(shinytitle)
-
-selectInputS <- function(id, mylabel) {
-  div(selectInput(id, label=span(mylabel, style = "font-weight: normal"), 
-              choices = NULL, selected = NULL, multiple = TRUE))
-}
+library(shinyWidgets)
 
 ui <- fluidPage(
   tags$head(
@@ -39,11 +35,21 @@ ui <- fluidPage(
   use_shiny_title(),
   
   ## Title row
-  titlePanel(div(span("Base", style = "color:#29804e; font-weight: normal"),
+  titlePanel(
+    fluidRow(
+      column(10, align = "left",
+             div(span("Base", style = "color:#29804e; font-weight: normal"),
                  span("Épées à poignée métallique de l'âge du Bronze", style = "color:#29804e; font-style: italic"),
                  span("(EPoMAB)", style = "color:#29804e; font-weight: normal")
                  )
              ),
+      column(2, align = "right",
+             radioGroupButtons(inputId = "lang",
+                                  label = NULL,
+                                  choices = c("Fr","En"),
+                                  selected = "Fr"))
+    )
+  ),
 
     tabsetPanel(id = "mainpanel",
       tabPanel(title = "Présentation", value = "tabpres",
