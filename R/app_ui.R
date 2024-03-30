@@ -39,10 +39,7 @@ ui <- fluidPage(
   titlePanel(
     fluidRow(
       column(10, align = "left",
-             div(span("Base", style = "color:#29804e; font-weight: normal"),
-                 span("Épées à poignée métallique de l'âge du Bronze", style = "color:#29804e; font-style: italic"),
-                 span("(EPoMAB)", style = "color:#29804e; font-weight: normal")
-                 )
+             uiOutput("maintitle")
              ),
       column(2, align = "right",
              radioGroupButtons(inputId = "lang",

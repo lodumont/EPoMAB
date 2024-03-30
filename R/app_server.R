@@ -39,6 +39,15 @@ server <- function(input, output, session) {
   #                    X = mob$X,
   #                    Y = mob$Y)
   
+  ## Render main title
+  output$maintitle <-   renderUI({
+    switch(input$lang,
+           "Fr" = maintitle_fr,
+           "En" = maintitle_en,
+           stop("Option inconnue")
+    )
+  })
+  
   ## Welcome text rendering according to chosen language (French (default) or English)
   output$welcome <- includeLangMarkdown("www/intro_fr.md",
                                         "www/intro_en.md")
@@ -48,7 +57,7 @@ server <- function(input, output, session) {
                                         "README.en.md")
   
   ## Tab titles according to selected language: Fr (default) or En
-  set_tabset_titles <- purrr::pmap(tabtitles, switchLang)
+  set_tabset_titles <- purrr::pmap(tabtitles, switchLangOutput)
   
   ## Table query parameters
   # Run customized function updateSelectInput_col through table_eq values

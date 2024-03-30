@@ -49,9 +49,8 @@ tabtitles <- tibble::tribble(
   "tabbib",   "Bibliographie", "References"
 )
 
-# Function to switch languages of tab titles
-switchLang <- function(id, fr, en) {
-  output[[id]] <- renderText({
+switchLang <- function(fr, en) {
+  renderText({
     switch(input$lang,
            "Fr" = fr,
            "En" = en,
@@ -59,3 +58,17 @@ switchLang <- function(id, fr, en) {
     )
   })
 }
+
+# Function to switch languages of tab titles
+switchLangOutput <- function(id, fr, en) {
+  output[[id]] <- switchLang(fr, en)
+}
+
+maintitle_fr <- div(span("Base", style = "color:#29804e; font-weight: normal"),
+                    span("Épées à poignée métallique de l'âge du Bronze", style = "color:#29804e; font-style: italic"),
+                          span("(EPoMAB)", style = "color:#29804e; font-weight: normal")
+)
+
+maintitle_en <- div(span("European Bronze Age solid-hilted swords", style = "color:#29804e; font-style: italic"),
+                    span("database", style = "color:#29804e; font-weight: normal")
+)
