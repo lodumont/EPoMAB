@@ -88,9 +88,9 @@ Sous l'onglet `Carte`, il est possible d'explorer ce même jeu de données par l
 
 La sélection peut également s'effectuer grâce aux deux outils présent dans la barre latérale de la carte, représentés par un polygone et un carré. En choisissant ce dernier, il est possible de sélectionner des points en traçant une aire de forme rectangulaire. L'outil polygone permet quant à lui de tracer une forme plus complexe à laquelle chaque clic ajoute un angle. Il est possible de définir plusieurs zones de sélection à l'aide de ces outils. Le bouton "Reset" permet d'effacer les sélections.
 
-Finalement, il est également possible de sélectionner les enregistrements à partir des cours d'eau affichés sur la carte. Les principaux cours d'eau européens apparaissent en gris sur la carte. En passant le curseur par dessus, le nom du cours d'eau s'affiche. En cliquant, le cours d'eau est sélectionné et apparaît en rouge. Sous la carte, le nom du cours d'eau sélectionné s'affiche ainsi qu'un champ permettant de renseigner une distance. En cliquant sur "Sélection", 
+Finalement, il est également possible de sélectionner les enregistrements à partir des cours d'eau affichés sur la carte. Les principaux cours d'eau européens apparaissent en gris sur la carte. En passant le curseur par dessus, le nom du cours d'eau s'affiche. En cliquant, le cours d'eau est sélectionné et apparaît en rouge. Sous la carte, le nom du cours d'eau sélectionné s'affiche ainsi qu'un champ permettant de renseigner une distance. Cliquez sur "Sélection" pour sélectionner les épées situées dans le rayon choisi autour de la rivière sélectionnée.
 
-Les différentes méthodes (sélection manuelle, à partir d'une aire géographique ou de la distance à un cours d'eau) sont complémentaires et peuvent être utilisées conjointement. Une fois les points sélectionnés, il est possible d'exporter les données correspondantes au format `csv` en utilisant l bouton "Télécharger". 
+Les différentes méthodes (sélection manuelle, à partir d'une aire géographique ou de la distance à un cours d'eau) sont complémentaires et peuvent être utilisées conjointement. Une fois les points sélectionnés, il est possible d'exporter les données correspondantes au format `csv` en utilisant le bouton "Télécharger". 
 
 ## Feuille de route
 
@@ -108,4 +108,4 @@ La base Épées à poignée métallique de l'âge du Bronze est développpée et
 
 #### Thèse de doctorat
 
-  - L. Dumont (2022) – Production et circulation des épées à poignée métallique de l'âge du Bronze, Ghent University et Université de Bourgogne-Franche-Comté, 781 p., <https://theses.hal.science/tel-03815132>
+  - L. Dumont (2022) – *Production et circulation des épées à poignée métallique de l'âge du Bronze*, Ghent University et Université de Bourgogne-Franche-Comté, 781 p., <https://theses.hal.science/tel-03815132>

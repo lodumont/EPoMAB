@@ -31,8 +31,8 @@ updateSelectInput_reset <- function(id, col) {
 includeLangMarkdown <- function(file.fr, file.en) {
   renderUI({
     file <- switch(input$lang,
-                   "Fr" = paste0("www/",file.fr),
-                   "En" = paste0("www/",file.en),
+                   "Fr" = file.fr,
+                   "En" = file.en,
                    stop("Option inconnue")
     )
     includeMarkdown(file)

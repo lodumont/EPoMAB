@@ -39,6 +39,14 @@ server <- function(input, output, session) {
   #                    X = mob$X,
   #                    Y = mob$Y)
   
+  ## Welcome text rendering according to chosen language (French (default) or English)
+  output$welcome <- includeLangMarkdown("www/intro_fr.md",
+                                        "www/intro_en.md")
+  
+  ## Welcome text rendering according to chosen language (French (default) or English)
+  output$readme <- includeLangMarkdown("README.md",
+                                        "README.en.md")
+  
   ## Table query parameters
   # Run customized function updateSelectInput_col through table_eq values
   usi_query <- purrr::pmap(table_eq, updateSelectInput_col)
@@ -635,8 +643,4 @@ server <- function(input, output, session) {
       write.csv(maptable(), fname, row.names = FALSE)
     }
   )
-  
-  ## Welcome text rendering according to chosen language (French (default) or English)
-  output$welcome <- includeLangMarkdown("intro_fr.md",
-                                        "intro_en.md")
 }

@@ -157,7 +157,8 @@ ui <- fluidPage(
             includeHTML("www/EPoMAB_biblio.html")
             ),
     tabPanel("Documentation", value = "tabdoc",
-             includeMarkdown("README.md")
+             #includeMarkdown("README.md")
+             uiOutput("readme")
              ),
     tabPanel("Contact", value = "tabcontact",
              includeMarkdown("www/contact.md"),
