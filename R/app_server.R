@@ -47,6 +47,9 @@ server <- function(input, output, session) {
   output$readme <- includeLangMarkdown("README.md",
                                         "README.en.md")
   
+  ## Tab titles according to selected language: Fr (default) or En
+  set_tabset_titles <- purrr::pmap(tabtitles, switchLang)
+  
   ## Table query parameters
   # Run customized function updateSelectInput_col through table_eq values
   usi_query <- purrr::pmap(table_eq, updateSelectInput_col)

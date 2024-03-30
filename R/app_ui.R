@@ -53,7 +53,7 @@ ui <- fluidPage(
   ),
 
     tabsetPanel(id = "mainpanel",
-      tabPanel(title = "Présentation", value = "tabpres",
+      tabPanel(title = uiOutput("tabpres"), value = "tabpres",
                fluidRow(
                  br(),
                  column(1,
@@ -79,7 +79,7 @@ ui <- fluidPage(
                  ), # end spacing column
                ) # end fluidRow
               ), # end tabPanel Présentation
-      tabPanel(title = "Données", value = "tabletab",
+      tabPanel(title = uiOutput("tabtable"), value = "tabtable",
           sidebarLayout(
             sidebarPanel(width=2,
               
@@ -117,7 +117,7 @@ ui <- fluidPage(
             ) # end mainPanel
           ) # end sidebarLayout
       ), #end tabPanel Données
-    tabPanel(title = "Carte", value = "maptab",
+    tabPanel(title = uiOutput("tabmap"), value = "tabmap",
              fluidRow(
                column(4,
                  align = "left",
@@ -146,7 +146,7 @@ ui <- fluidPage(
              ),
              fluidRow(uiOutput("clickedpoint"))
       ),
-    tabPanel("Bibliographie", value = "tabbib",
+    tabPanel(title = uiOutput("tabbib"), value = "tabbib",
             p(),
             p("Les données présentes dans cette base sont issues du dépouillement des références ci-dessous."),
             p("La liste des références utilisées est également disponible au format bibtex : ",

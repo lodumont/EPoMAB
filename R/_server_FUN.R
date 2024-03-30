@@ -1,5 +1,6 @@
 ## functions for server side
 
+# Equivalence table for UI id and data column
 table_eq <- tibble::tribble(
   ~ id,         ~ col,
   "swordGrp",   "Groupe",
@@ -36,5 +37,25 @@ includeLangMarkdown <- function(file.fr, file.en) {
                    stop("Option inconnue")
     )
     includeMarkdown(file)
+  })
+}
+
+# Equivalence table between tab titles and id
+tabtitles <- tibble::tribble(
+  ~ id,          ~ fr,          ~en,    
+  "tabpres", "Présentation", "Introduction",
+  "tabtable",   "Données",      "Data",
+  "tabmap",      "Carte",        "Map",
+  "tabbib",   "Bibliographie", "References"
+)
+
+# Function to switch languages of tab titles
+switchLang <- function(id, fr, en) {
+  output[[id]] <- renderText({
+    switch(input$lang,
+           "Fr" = fr,
+           "En" = en,
+           stop("Option inconnue")
+    )
   })
 }
