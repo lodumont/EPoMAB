@@ -39,7 +39,8 @@ ui <- fluidPage(
   titlePanel(
     fluidRow(
       column(10, align = "left",
-             uiOutput("maintitle")
+             uiOutput("maintitle"),
+             tags$head(tags$link(rel = "icon", type = "image/png", sizes = "32x32", href = "icon.png"))
              ),
       column(2, align = "right",
              radioGroupButtons(inputId = "lang",
