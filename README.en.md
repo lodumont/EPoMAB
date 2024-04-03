@@ -94,9 +94,8 @@ The different methods (manual selection, based on a geographical area or distanc
 
 ## Roadmap
 
-In the near future, several points need to be improved:
+In the near future, several points need to be improved and implemented:
 
-  - Development of a multilingual interface (at least French-English).
   - Addition of queries based on technological criteria in the table.
   - Possibility of customising and exporting distribution maps.
 

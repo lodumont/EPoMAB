@@ -94,9 +94,8 @@ Les différentes méthodes (sélection manuelle, à partir d'une aire géographi
 
 ## Feuille de route
 
-Dans un futur proche, plusiers points devront être améliorés :
+Dans un futur proche, plusiers points devront être améliorés et implémenter :
 
-  - Développement d'une interface multilingue (au moins français-anglais).
   - Ajout de requêtes à partir de critères technologiques dans le tableau.
   - Possibilité de personnaliser et d'exporter des cartes de répartition.
 
