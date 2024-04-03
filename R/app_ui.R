@@ -58,8 +58,10 @@ ui <- fluidPage(
                  ), # end spacing column
                  column(3, align = "center",
                         img(src='Buggenum_poignee_web.png', 
-                            width = "75%", height = "75%"),
-                        p("Épée de Buggenum (Pays-Bas). © L. Dumont.")
+                            width = "70%", height = "70%"),
+                        uiOutput("legend")
+                        # div(p("Épée de Buggenum (Pays-Bas). © L. Dumont."),
+                        #     style = "font-size: small;")
                        ), # end column picture
                  column(1,
                         span()
@@ -68,9 +70,10 @@ ui <- fluidPage(
                        #includeMarkdown("www/intro.md"),
                        uiOutput("welcome"),
                        p(),
-                       img(src='Tournus_Farges_motif_lame.png', 
-                           width = "75%", height = "75%"),
-                       ), # end text column
+                       div(img(src='Tournus_Farges_motif_lame.png', 
+                           width = "65%", height = "65%"),
+                           style = "text-align: center;"
+                       )), # end text column
                  column(1,
                         span()
                  ), # end spacing column
@@ -81,34 +84,40 @@ ui <- fluidPage(
             sidebarPanel(width=2,
               
               # Typologie
-              p(span("Typologie", style = "font-weight: bold; font-size:16px;")),
+              #p(span("Typologie", style = "font-weight: bold; font-size:16px;")),
+              uiOutput("filter.typo"),
               selectInputS("swordGrp", "Groupe :"),
               selectInputS("swordType", "Type :"),
               selectInputS("swordVar", "Variante :"),
           
               # Contexte
-              div(selectInput("swordCont", label=span("Contexte", style = "font-size: 16px;"),
+              div(selectInput("swordCont", label=uiOutput("filter.context"),
                               choices = NULL, selected = NULL, multiple = TRUE)),
               
               # Chronologie
-              p(span("Chronologie", style = "font-weight: bold; font-size:16px;")),
+              #p(span("Chronologie", style = "font-weight: bold; font-size:16px;")),
+              uiOutput("filter.chrono"),
               selectInputS("swordPer", "Période :"),
               selectInputS("swordPha", "Phase :"),
               selectInputS("swordStep", "Étape :"),
               
               # Géographie
-              p(span("Géographie", style = "font-weight: bold; font-size:16px;")),
+              #p(span("Géographie", style = "font-weight: bold; font-size:16px;")),
+              uiOutput("filter.geo"),
               selectInputS("swordCountry", "Pays :"),
               selectInputS("swordReg", "Région :")
               
             ), # end sidebarPanel
             mainPanel(width=8,
               div(style="display:inline-block",
-                  radioButtons("search_typo","Mode de recherche :", 
-                               choices = c("ET","OU"), selected = "ET", inline = T)),
+                  uiOutput("search.mode")
+                  # radioButtons("search_typo","Mode de recherche :",
+                  #              choices = c("ET","OU"), selected = "ET", inline = T)
+                  ),
               div(style="display:inline-block", actionButton("reset", "Reset")),
               #div(style="display:inline-block", actionButton("tomap","Aller à la carte")),
-              div(style="display:inline-block", downloadButton("download.table","Télécharger")),
+              div(style="display:inline-block", downloadButton("download.table", textOutput("download",
+                                                                                            inline = T))),
               p(),
               fluidRow(DT::dataTableOutput("table"))
             ) # end mainPanel
@@ -118,13 +127,13 @@ ui <- fluidPage(
              fluidRow(
                column(4,
                  align = "left",
-                 HTML("<h4>Cliquez sur un point pour visualiser les informations</h4>")
+                 uiOutput("map.select.text")
                ),
                # column(2,
                #        radioButtons("map_mode","Mode choisi", choices = c("Sélection","Export"), selected = "Sélection", inline = T)
                # ),
                column(2,
-                      actionButton("map.select.all","Tout sélectionner")
+                      actionButton("map.select.all", textOutput("select.all"))
                ),
                column(1,
                       actionButton("reset.map.selection", "Reset")
@@ -144,11 +153,12 @@ ui <- fluidPage(
              fluidRow(uiOutput("clickedpoint"))
       ),
     tabPanel(title = uiOutput("tabbib"), value = "tabbib",
-            p(),
-            p("Les données présentes dans cette base sont issues du dépouillement des références ci-dessous."),
-            p("La liste des références utilisées est également disponible au format bibtex : ",
-              a(href="EPoMAB.bib", "Télécharger la bibliographie", download=NA, target="_blank")),
-            p(),
+            uiOutput("biblio"),
+            # p(),
+            # p("Les données présentes dans cette base sont issues du dépouillement des références ci-dessous."),
+            # p("La liste des références utilisées est également disponible au format bibtex : ",
+            #   a(href="EPoMAB.bib", "Télécharger la bibliographie", download=NA, target="_blank")),
+            # p(),
             #tags$iframe(src="EPoMAB_biblio.html", width = 800, height = 700)
             includeHTML("www/EPoMAB.css"),
             includeHTML("www/EPoMAB_biblio.html")
@@ -158,7 +168,8 @@ ui <- fluidPage(
              uiOutput("readme")
              ),
     tabPanel("Contact", value = "tabcontact",
-             includeMarkdown("www/contact.md"),
+             #includeMarkdown("www/contact.md"),
+             uiOutput("contact"),
              img(src="Huma-Num.png", width = "30%", height = "30%")
             )
   ) # end TabsetPanel

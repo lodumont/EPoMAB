@@ -40,17 +40,24 @@ server <- function(input, output, session) {
   #                    Y = mob$Y)
   
   ## Render main title
-  output$maintitle <-   renderUI({
-    switch(input$lang,
-           "Fr" = maintitle_fr,
-           "En" = maintitle_en,
-           stop("Option inconnue")
-    )
-  })
+  # output$maintitle <- renderUI({
+  #   switch(input$lang,
+  #          "Fr" = maintitle_fr,
+  #          "En" = maintitle_en,
+  #          stop("Option inconnue")
+  #   )
+  # })
+  
+  output$maintitle <- switchLangUI(maintitle_fr, maintitle_en)
   
   ## Welcome text rendering according to chosen language (French (default) or English)
   output$welcome <- includeLangMarkdown("www/intro_fr.md",
                                         "www/intro_en.md")
+  
+  output$legend <- switchLangUI(div(p("Épée de Buggenum (Pays-Bas). © L. Dumont."),
+                                       style = "font-size: small;"),
+                              div(p("Sword from Buggenum (the Netherlands). © L. Dumont."),
+                                       style = "font-size: small;"))
   
   ## Welcome text rendering according to chosen language (French (default) or English)
   output$readme <- includeLangMarkdown("README.md",
@@ -59,6 +66,60 @@ server <- function(input, output, session) {
   ## Tab titles according to selected language: Fr (default) or En
   set_tabset_titles <- purrr::pmap(tabtitles, switchLangOutput)
   
+  output$biblio <- switchLangUI(div(p(),
+                                    p("Les données présentes dans cette base sont issues du dépouillement des références ci-dessous."),
+                                    p("La liste des références utilisées est également disponible au format bibtex : ",
+                                    a(href="EPoMAB.bib", "Télécharger la bibliographie", download=NA, target="_blank")),
+                                    p()),
+                                div(p(),
+                                    p("Data were collected from the references listed below."),
+                                    p("The list of references is also available in the bibtex format: ",
+                                      a(href="EPoMAB.bib", "Download references", download=NA, target="_blank")),
+                                    p()))
+  
+  ## Contact text rendering according to selected language
+  output$contact <- includeLangMarkdown("www/contact.md",
+                                        "www/contact_en.md")
+  
+  ## Table filter titles
+  output$filter.typo <- switchLangUI(p(span("Typologie", style = "font-weight: bold; font-size:16px;")),
+                                     p(span("Typology", style = "font-weight: bold; font-size:16px;")))
+  output$filter.context <- switchLangUI(p(span("Contexte", style = "font-weight: bold; font-size:16px;")),
+                                        p(span("Context", style = "font-weight: bold; font-size:16px;")))
+  output$filter.chrono <- switchLangUI(p(span("Chronologie", style = "font-weight: bold; font-size:16px;")),
+                                       p(span("Chronology", style = "font-weight: bold; font-size:16px;")))
+  output$filter.geo <- switchLangUI(p(span("Géographie", style = "font-weight: bold; font-size:16px;")),
+                                    p(span("Geography", style = "font-weight: bold; font-size:16px;")))
+  
+  ## Download button
+  output$download <- switchLang("Télécharger","Download")
+  output$download.map <- switchLang("Télécharger","Download")
+  
+  ## Select all map button
+  output$select.all <- switchLang("Tout sélectionner", "Select all")
+  
+  ## Title above map
+  output$map.select.text <- switchLangUI(HTML("<h4>Cliquez sur un point pour visualiser les informations</h4>"),
+                                         HTML("<h4>Click on a point to see the data</h4>"))
+  
+  ## Selection button from selected river
+  output$map.selection <- switchLang("Sélectionner", "Select")
+  
+  ## Table search mode
+  output$search.mode <- renderUI({
+    options <- switch(input$lang,
+                      "Fr" = c("ET","OU"),
+                      "En" = c("AND","OR"),
+                      stop("Option inconnue")
+    )
+    label <- switch(input$lang,
+                    "Fr" = "Mode de recherche",
+                    "En" = "Search mode",
+                    stop("Option inconnue")
+    )
+    radioButtons("search_typo", label,
+                 choices = options, inline = T)
+  })
   ## Table query parameters
   # Run customized function updateSelectInput_col through table_eq values
   usi_query <- purrr::pmap(table_eq, updateSelectInput_col)
@@ -80,12 +141,12 @@ server <- function(input, output, session) {
   # updateSelectInput(session, "swordReg", choices = sort(unique(EPoMAB$Region)))
   
   ##Search mode
-  smode <- reactive(input$search_typo)
+  #smode <- reactive(input$search_typo)
   
   ## Responsive type/variant selection for AND research
   observeEvent(input$swordGrp, {
     if(!is.null(input$swordGrp)) {
-      if(smode() == "ET"){
+      if(input$search_typo == "ET" | input$search_typo == "AND"){
         # Updating choices according to what Groupe is selected
         usi_smode_ET_Groupe <- purrr::pmap(table_eq[2:7,], ~updateSelectInput_smode_ET(id = ..1,
                                                                                  col = ..2,
@@ -125,7 +186,7 @@ server <- function(input, output, session) {
   
   observeEvent(input$swordType, {
     if(!is.null(input$swordType)) {
-      if(smode() == "ET"){
+      if(input$search_typo == "ET" | input$search_typo == "AND"){
         usi_smode_ET_Type <- purrr::pmap(table_eq[3:7,], ~updateSelectInput_smode_ET(id = ..1,
                                                                                      col = ..2,
                                                                                      col2 = "Type"))
@@ -188,39 +249,43 @@ server <- function(input, output, session) {
     datatype <- data[FALSE,]
     datavar <- data[FALSE,]
     
-    if(smode() == "ET"){
-      if(length(input$swordGrp)){
-        data %>% filter(Groupe == input$swordGrp) -> data
+    if(length(input$swordGrp) | length(input$swordType) | length(input$swordVar)) {
+      if(input$search_typo == "ET" | input$search_typo == "AND"){
+        if(length(input$swordGrp)){
+          data %>% filter(Groupe == input$swordGrp) -> data
+        }
+        
+        if(length(input$swordType)){
+          data %>% filter(Type == input$swordType) -> data
+        }
+        
+        if(length(input$swordVar)){
+          data %>% filter(Variante == input$swordVar) -> data
+        }
+        
+        data
+      } else if(input$search_typo == "OU" | input$search_typo == "OR"){
+        if(length(input$swordGrp)){
+          data %>% filter(Groupe == input$swordGrp) -> datafam
+        }
+        
+        if(length(input$swordType)){
+          data %>% filter(Type == input$swordType) -> datatype
+        }
+        
+        if(length(input$swordVar)){
+          data %>% filter(Variante == input$swordVar) -> datavar
+        }
+        
+        if(length(input$swordGrp) | length(input$swordType) | length(input$swordVar)){
+          data <- rbind(datafam,datatype,datavar)
+          data
+        } else {
+          data
+        }
       }
-      
-      if(length(input$swordType)){
-        data %>% filter(Type == input$swordType) -> data
-      }
-      
-      if(length(input$swordVar)){
-        data %>% filter(Variante == input$swordVar) -> data
-      }
-      
+    } else {
       data
-    } else if(smode() == "OU"){
-      if(length(input$swordGrp)){
-        data %>% filter(Groupe == input$swordGrp) -> datafam
-      }
-      
-      if(length(input$swordType)){
-        data %>% filter(Type == input$swordType) -> datatype
-      }
-      
-      if(length(input$swordVar)){
-        data %>% filter(Variante == input$swordVar) -> datavar
-      }
-      
-      if(length(input$swordGrp) | length(input$swordType) | length(input$swordVar)){
-        data <- rbind(datafam,datatype,datavar)
-        data
-      } else {
-        data
-      }
     }
   })
   
@@ -238,71 +303,79 @@ server <- function(input, output, session) {
   ## Chronology
   dataset_chrono <- reactive({
     datachrono <- EPoMAB
-    if(smode() == "ET"){
-      if(length(input$swordPer)){
-        datachrono %>% filter(Periode == input$swordPer) -> datachrono
+    if(length(input$swordPer) | length(input$swordPha) | length(input$swordStep)){
+      if(input$search_typo == "ET" | input$search_typo == "AND"){
+        if(length(input$swordPer)){
+          datachrono %>% filter(Periode == input$swordPer) -> datachrono
+        }
+        if(length(input$swordPha)){
+          datachrono %>% filter(Phase == input$swordPha) -> datachrono
+        }
+        if(length(input$swordStep)){
+          datachrono %>% filter(Etape == input$swordStep) -> datachrono
+        }
+        datachrono
+      } else if(input$search_typo == "OU" | input$search_typo == "OR") {
+        ## Initializing dataframes for OR search
+        dataper <- datachrono[FALSE,]
+        datapha <- datachrono[FALSE,]
+        datastep <- datachrono[FALSE,]
+        
+        if(length(input$swordPer)){
+          datachrono %>% filter(Periode == input$swordPer) -> dataper
+        }
+        if(length(input$swordPha)){
+          datachrono %>% filter(Phase == input$swordPha) -> datapha
+        }
+        if(length(input$swordStep)){
+          datachrono %>% filter(Etape == input$swordStep) -> datastep
+        }
+        
+        if(length(input$swordPer) | length(input$swordPha) | length(input$swordStep)){
+          datachrono <- rbind(dataper,datapha,datastep)
+          datachrono
+        } else {
+          datachrono
+        }
       }
-      if(length(input$swordPha)){
-        datachrono %>% filter(Phase == input$swordPha) -> datachrono
-      }
-      if(length(input$swordStep)){
-        datachrono %>% filter(Etape == input$swordStep) -> datachrono
-      }
+    } else {
       datachrono
-    } else if(smode() == "OU") {
-      ## Initializing dataframes for OR search
-      dataper <- datachrono[FALSE,]
-      datapha <- datachrono[FALSE,]
-      datastep <- datachrono[FALSE,]
-      
-      if(length(input$swordPer)){
-        datachrono %>% filter(Periode == input$swordPer) -> dataper
-      }
-      if(length(input$swordPha)){
-        datachrono %>% filter(Phase == input$swordPha) -> datapha
-      }
-      if(length(input$swordStep)){
-        datachrono %>% filter(Etape == input$swordStep) -> datastep
-      }
-      
-      if(length(input$swordPer) | length(input$swordPha) | length(input$swordStep)){
-        datachrono <- rbind(dataper,datapha,datastep)
-        datachrono
-      } else {
-        datachrono
-      }
     }
   })
   
   ## Geography
   dataset_geo <- reactive({
     datageo <- EPoMAB
-    if(smode() == "ET"){
-      if(length(input$swordCountry)){
-        datageo %>% filter(Pays == input$swordCountry) -> datageo
+    if(length(input$swordCountry) | length(input$swordReg)){
+      if(input$search_typo == "ET" | input$search_typo == "AND"){
+        if(length(input$swordCountry)){
+          datageo %>% filter(Pays == input$swordCountry) -> datageo
+        }
+        if(length(input$swordReg)){
+          datageo %>% filter(Region == input$swordReg) -> datageo
+        }
+        datageo
+      } else if(input$search_typo == "OU" | input$search_typo == "OR") {
+        ## Initializing dataframes for OR search
+        datacountry <- datageo[FALSE,]
+        datareg <- datageo[FALSE,]
+        
+        if(length(input$swordCountry)){
+          datageo %>% filter(Pays == input$swordCountry) -> datacountry
+        }
+        if(length(input$swordReg)){
+          datageo %>% filter(Region == input$swordReg) -> datareg
+        }
+        
+        if(length(input$swordCountry) | length(input$swordReg)){
+          datageo <- rbind(datacountry,datareg)
+          datageo
+        } else {
+          datageo
+        }
       }
-      if(length(input$swordReg)){
-        datageo %>% filter(Region == input$swordReg) -> datageo
-      }
+    } else {
       datageo
-    } else if(smode() == "OU") {
-      ## Initializing dataframes for OR search
-      datacountry <- datageo[FALSE,]
-      datareg <- datageo[FALSE,]
-      
-      if(length(input$swordCountry)){
-        datageo %>% filter(Pays == input$swordCountry) -> datacountry
-      }
-      if(length(input$swordReg)){
-        datageo %>% filter(Region == input$swordReg) -> datareg
-      }
-      
-      if(length(input$swordCountry) | length(input$swordReg)){
-        datageo <- rbind(datacountry,datareg)
-        datageo
-      } else {
-        datageo
-      }
     }
   })
   
@@ -365,7 +438,7 @@ server <- function(input, output, session) {
                        options = providerTileOptions(noWrap = TRUE,
                                                      minZoom = 3, maxZoom = 9)
                        ) %>% 
-      setView(lng = 4, lat = 50, zoom = 5) %>% ## Default view
+      setView(lng = 5, lat = 50, zoom = 5) %>% ## Default view
       setMaxBounds(lng1 = -10, lat1 = 35, ## Maximum user view
                 lng2 = 29, lat2 = 65) %>% 
       addDrawToolbar(targetGroup = "draw", position = "topleft",
@@ -379,7 +452,11 @@ server <- function(input, output, session) {
                    stroke = TRUE,
                    weight = 2,
                    layerId = ~ne_id,
-                   label = ~name_fr,
+                   label = switch(input$lang,
+                                  "Fr" = ~name_fr,
+                                  "En" = ~name_en,
+                                  stop("Option inconnue")
+                   ),
                    group = "rivers") %>%
       addPolylines(data = rivers_europe, ## hidden rivers layer
                    color = "red",
@@ -387,7 +464,11 @@ server <- function(input, output, session) {
                    stroke = TRUE,
                    weight = 3,
                    layerId = ~dissolve,
-                   label = ~name_fr,
+                   label = switch(input$lang,
+                                  "Fr" = ~name_fr,
+                                  "En" = ~name_en,
+                                  stop("Option inconnue")
+                   ),
                    group = ~dissolve) %>%
       addCircles(data = datasetmap(),
                  lng = ~X, lat = ~Y, ## default visible layer
@@ -417,7 +498,8 @@ server <- function(input, output, session) {
   ## Preparation for points selection
   selected <- reactiveValues(ids = vector(),
                              riverid = vector(),
-                             rivername = vector())
+                             rivername_fr = vector(),
+                             rivername_en = vector())
   show.map.table <- reactiveVal(0)
   show.map.riverbuffer <- reactiveVal(0)
   
@@ -440,7 +522,8 @@ server <- function(input, output, session) {
         proxy %>% hideGroup(group = rivers_europe$dissolve[which(rivers_europe$ne_id == selected$riverid)])
       }
       selected$riverid <- input$swordmap_shape_click$id
-      selected$rivername <- rivers_europe$name_fr[which(rivers_europe$ne_id == selected$riverid)]
+      selected$rivername_fr <- rivers_europe$name_fr[which(rivers_europe$ne_id == selected$riverid)]
+      selected$rivername_en <- rivers_europe$name_en[which(rivers_europe$ne_id == selected$riverid)]
       proxy %>% showGroup(group = rivers_europe$dissolve[which(rivers_europe$ne_id == selected$riverid)])
       show.map.riverbuffer(1)
     } else if(input$swordmap_shape_click$group %in% rivers_europe$dissolve) {
@@ -613,17 +696,31 @@ server <- function(input, output, session) {
   output$riverbuffer <- renderUI(
     expr= if(show.map.riverbuffer()) {
       fluidRow(
-               paste0("Rivière sélectionnée : ",
-                      selected$rivername),
+               paste0(switch(input$lang,
+                        "Fr" = "Rivière sélectionnée : ",
+                        "En" = "Selected river: ",
+                        stop("Option inconnue")
+                      ),
+                      switch(input$lang,
+                             "Fr" = selected$rivername_fr,
+                             "En" = selected$rivername_en,
+                             stop("Option inconnue")
+                      )
+                      ),
                br(),
                numericInput("riverbuffer",
-                            "Sélection dans un rayon de (en m) :",
+                            #"Sélection dans un rayon de (en m) :",
+                            switch(input$lang,
+                                   "Fr" = "Sélection dans un rayon de (en m) :",
+                                   "En" = "Selection within a radius of (in m):",
+                                   stop("Option inconnue")
+                            ),
                             5000,
                             min = 0,
                             max = 100000,
                             step = 1000),
                    br(),
-                   actionButton("submit.river.buffer", "Sélection")
+                   actionButton("submit.river.buffer", textOutput("map.selection"))
         )#,
         # column(1,
         #        br(),
@@ -642,7 +739,8 @@ server <- function(input, output, session) {
   ## Display download button is point selected
   output$button.table.map <- renderUI(
     expr = if(show.map.table()){
-      downloadButton("download.table.map","Télécharger")
+      downloadButton("download.table.map", textOutput("download.map",
+                                                     inline = T))
     } else {
       NULL
     }

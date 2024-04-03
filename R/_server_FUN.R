@@ -59,6 +59,16 @@ switchLang <- function(fr, en) {
   })
 }
 
+switchLangUI <- function(fr, en) {
+  renderUI({
+    switch(input$lang,
+           "Fr" = fr,
+           "En" = en,
+           stop("Option inconnue")
+    )
+  })
+}
+
 # Function to switch languages of tab titles
 switchLangOutput <- function(id, fr, en) {
   output[[id]] <- switchLang(fr, en)
