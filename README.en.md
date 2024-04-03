@@ -1,6 +1,8 @@
 European Bronze Age solid-hilted swords database
 ================
 
+[![DOI](https://zenodo.org/badge/778354510.svg)](https://zenodo.org/doi/10.5281/zenodo.10913139)
+
 The `EPoMAB` database is an R Shiny application allowing you to interactively explore the inventory of European Bronze Age solid-hilted swords. It is possible to explore the dataset containing information on the typology, chronology, technology and discovery contexts of the inventoried swords via a table and a distribution map. The dataset differs from one available in the dat\@UBFC repository (<https://doi.org/10.25666/DATAUBFC-2024-03-06>) in that the data here is regularly updated based on new discoveries and new studies carried out on these objects.
 
 ## Presentation of the dataset
