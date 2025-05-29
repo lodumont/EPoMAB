@@ -1,0 +1,2 @@
+source ./heurist/bin/activate 
+heurist download -f ./data/dumont_swords.db
