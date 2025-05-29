@@ -1,5 +1,0 @@
-La base `EPoMAB` est une application R Shiny permettant d'explorer de manière interactive l'inventaire des épées à poignée métallique de l'âge du Bronze en Europe. Il est possible d'y explorer le jeu de données contenant des informations sur la typologie, la chronologie, la technologie et les contextes de découverte des épées inventoriées par l'intermédiaire d'un tableau et d'une carte de répartition. Le jeu de données diffère de celui hébergé par la plateforme dat\@UBFC (<https://doi.org/10.25666/DATAUBFC-2024-03-06>) dans la mesure où les données sont ici régulièrement mises à jour en fonction des nouvelles découvertes et des nouvelles études menées sur ces objets.
-
-Le jeu de données compte à l'heure actuelle 2780 enregistrements décrits à l'aide de 27 variables. Celles-ci décrivent la provenance, la typologie, la chronologie, les contextes de découverte et les techniques de production de chaque épée. Ces données sont accessibles sous deux formes : un tableau et une carte, accessibles par les onglets éponymes.
-
-Une présentation et documentation plus complète de la base est accessible sous l'onglet `Documentation`.
